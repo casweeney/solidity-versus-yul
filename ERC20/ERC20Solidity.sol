@@ -11,7 +11,7 @@ contract SolidityERC20Token {
     event Approval(address indexed owner, address indexed spender, uint value);
 
     mapping(address => uint) public balances;
-    mapping(address => mapping(address => uint)) public allowance;
+    mapping(address => mapping(address => uint)) public allowances;
     
     // Send all the token to whoever deploys the contract
     constructor() {
@@ -20,6 +20,10 @@ contract SolidityERC20Token {
     
     function balanceOf(address owner) public view returns(uint) {
         return balances[owner];
+    }
+
+    function allowance(address owner, address spender) public view returns (uint256 remaining) {
+        return allowances[owner][spender];
     }
     
     function transfer(address to, uint value) public returns(bool) {
@@ -32,7 +36,7 @@ contract SolidityERC20Token {
     
     function transferFrom(address from, address to, uint value) public returns(bool) {
         require(balanceOf(from) >= value, 'balance too low');
-        require(allowance[from][msg.sender] >= value, 'allowance too low');
+        require(allowances[from][msg.sender] >= value, 'allowance too low');
         balances[to] += value;
         balances[from] -= value;
         emit Transfer(from, to, value);
@@ -40,7 +44,7 @@ contract SolidityERC20Token {
     }
     
     function approve(address spender, uint value) public returns(bool) {
-        allowance[msg.sender][spender] = value;
+        allowances[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
     }

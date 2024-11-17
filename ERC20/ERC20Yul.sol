@@ -20,7 +20,7 @@ contract YulERC20Token {
     /////// Error Selectors - There are used in the contract's revert message //////////
     // bytes4(keccak256("InsufficientFunds()")) 0x356680b7
     bytes32 constant InsufficientFundsSelector = 0x356680b700000000000000000000000000000000000000000000000000000000;
-    
+
     // bytes4(keccak256("InsufficientAllowance(address, address)")) 0xf180d8f9
     bytes32 constant InsufficientAllowanceSelector = 0xf180d8f900000000000000000000000000000000000000000000000000000000;
 
@@ -35,14 +35,31 @@ contract YulERC20Token {
     bytes32 constant transferEventHash = 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef;
     // keccak256(abi.encodePacked("Approval(address,address,uint256)"))
     bytes32 constant approvalEventHash = 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925;
+
     
     // Send all the token to whoever deploys the contract
     constructor() {
-        
+        assembly {
+            mstore(0x00, caller()) // Store deployer's address at memory location 0x00 (0)
+            mstore(0x20, 0x00) // Store mapping prefix (0x00) at memory location 0x20
+            let slot := keccak256(0x00, 0x40) // Compute storage slot for deployer's balance
+            sstore(slot, totalSupplyInHex) // Assign total supply to deployer's balance
+
+            sstore(0x20, totalSupplyInHex) // Store total supply in storage slot 0x20
+
+            mstore(0x00, totalSupplyInHex) // Prepare total supply value for logging
+            log3(0x00, 0x20, transferEventHash, 0x00, caller()) // Emit Transfer event
+        }
     }
 
     function name() public pure returns (string memory) {
-
+        assembly {
+            let mem_ptr := mload(0x40) // Get the free memory pointer
+            mstore(mem_ptr, 0x20) // Store the offset to the string data
+            mstore(add(mem_ptr, 0x20), tokenNameLength) // Store the string length
+            mstore(add(mem_ptr, 0x40), tokenNameData) // Store the string data
+            return(mem_ptr, 0x60) // Return the memory pointer and total size
+        }
     }
 
     function symbol() public pure returns (string memory) {

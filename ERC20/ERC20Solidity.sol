@@ -2,42 +2,46 @@
 pragma solidity 0.8.16;
 
 contract SolidityERC20Token {
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    uint public totalSupply = 1000000 * 10 ** 18;
+    string public name = "Solidity ERC20 Token";
+    string public symbol = "SET";
+    uint public decimals = 18;
+    
+    event Transfer(address indexed from, address indexed to, uint value);
+    event Approval(address indexed owner, address indexed spender, uint value);
 
-    function name() public view returns (string memory) {
-
+    mapping(address => uint) public balances;
+    mapping(address => mapping(address => uint)) public allowance;
+    
+    // Send all the token to whoever deploys the contract
+    constructor() {
+        balances[msg.sender] = totalSupply;
     }
-
-    function symbol() public view returns (string memory) {
-
+    
+    function balanceOf(address owner) public view returns(uint) {
+        return balances[owner];
     }
-
-    function decimal() public view returns (uint8) {
-
+    
+    function transfer(address to, uint value) public returns(bool) {
+        require(balanceOf(msg.sender) >= value, 'balance too low');
+        balances[to] += value;
+        balances[msg.sender] -= value;
+        emit Transfer(msg.sender, to, value);
+        return true;
     }
-
-    function totalSupply() public view returns (uint256) {
-
+    
+    function transferFrom(address from, address to, uint value) public returns(bool) {
+        require(balanceOf(from) >= value, 'balance too low');
+        require(allowance[from][msg.sender] >= value, 'allowance too low');
+        balances[to] += value;
+        balances[from] -= value;
+        emit Transfer(from, to, value);
+        return true;
     }
-
-    function balanceOf(address owner) public view returns (uint256) {
-
-    }
-
-    function transfer(address _from, address _to, uint256 _value) public returns (bool success) {
-
-    }
-
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        
-    }
-
-    function approve(address _spender, uint256 _value) public returns (bool success) {
-
-    }
-
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
-
+    
+    function approve(address spender, uint value) public returns(bool) {
+        allowance[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
+        return true;
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 contract StringsInSolidity {
-    string someString;
+    string public someString;
 
     function setString(string memory _someString) external {
         someString = _someString;

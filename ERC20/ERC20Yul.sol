@@ -6,8 +6,8 @@ contract YulERC20Token {
     ///// The constants below are used in name() and symbol() functions to return the token's name and symbol as strings ///////
 
     // ----------- Token Name -------------------
-    // Length of token name => "Solidity ERC20 Token" => 13
-    bytes32 constant tokenNameLength = 0x0000000000000000000000000000000000000000000000000000000000000013;
+    // Length of token name => "Solidity ERC20 Token" => 15
+    bytes32 constant tokenNameLength = 0x0000000000000000000000000000000000000000000000000000000000000015;
     // Bytes representation of token name => "Solidity ERC20 Token" => converted using rapid tables
     bytes32 constant tokenNameData = 0x536f6c696469747920455243323020546f6b656e000000000000000000000000;
 

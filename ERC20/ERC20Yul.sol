@@ -80,7 +80,7 @@ contract YulERC20Token {
 
     function totalSupply() public view returns (uint256) {
         assembly {
-            let total_supply := sload(0x02) // Load the value of total supply from storage slot 0x02
+            let total_supply := sload(0x20) // Load the value of total supply from storage slot 0x02
             mstore(0x00, total_supply) // Store the value in memory at address 0x00
             return(0x00, 0x20) // Return 32 bytes from memory starting at 0x00
         }
